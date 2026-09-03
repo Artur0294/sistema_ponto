@@ -1,10 +1,10 @@
 # 📋 Backlog de Desenvolvimento - Sistema de Controle de Ponto Eletrônico e Gestão de Banco de Horas
 
-Este documento contém o planejamento granular de tarefas e sub-tarefas para o desenvolvimento do sistema, com acompanhamento continuo de status e histórico de alterações.
+Este documento contém a estrutura granular de tarefas e subtarefas para o desenvolvimento do sistema, com acompanhamento contínuo de status e histórico de alterações.
 
 ---
 
-## 📌 Status General das Tarefas
+## 📌 Status Geral das Tarefas
 
 - `[ ]` Pendente
 - `[⏳]` Em Progresso
@@ -12,81 +12,92 @@ Este documento contém o planejamento granular de tarefas e sub-tarefas para o d
 
 ---
 
-## 🏗️ 1. Módulo Supabase & Conexão Base
-- [x] **1.1. Configuração do Cliente Supabase** *(Data de Conclusão: 2025-05-18)*
-  - [x] Criar diretório `js/`
-  - [x] Criar `js/supabase.js` importando SDK via CDN ESM (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm`)
-  - [x] Exportar instância do Supabase client pronta para configuração de `SUPABASE_URL` e `SUPABASE_ANON_KEY`
-- [ ] **1.2. Definição do Schema e tabelas do Banco de Dados PostgreSQL**
-  - [ ] Tabela de Usuários/Colaboradores (Matrícula, Nome, Cargo, Status, Saldo Banco de Horas, etc.)
-  - [ ] Tabela de Batidas de Ponto (ID Colaborador, Timestamp, Tipo [Entrada, Saída Intervalo, Retorno Intervalo, Saída Final], Origem)
-  - [ ] Tabela de Solicitacões / Ajustes Manuais
-  - [ ] Tabela de Audit Trail (Logs de Auditoria Imutáveis)
-- [ ] **1.3. Políticas RLS (Row Level Security)**
+## 🏗️ Módulo 1: Conexão e Infraestrutura
+- [x] **1.1. Análise de Contexto, SPEC Técnica e Esquema SQL** *(Data de Conclusão: 2025-05-18)*
+  - [x] Leitura e validação da especificação técnica (`SPEC.md` / `README.md`)
+  - [x] Validação da arquitetura No-Build (HTML5, CSS3 nativo, JS Vanilla ES6+, Supabase via CDN ESM)
+- [x] **1.2. Configuração da Conexão Base Supabase (`js/supabase.js`)** *(Data de Conclusão: 2025-05-18)*
+  - [x] Criar estrutura `/js`
+  - [x] Importar SDK do Supabase via CDN ESM (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm`)
+  - [x] Exportar instância inicial do cliente Supabase (`SUPABASE_URL` e `SUPABASE_ANON_KEY`)
+- [ ] **1.3. Modelagem do Banco de Dados PostgreSQL & Supabase**
+  - [ ] Criar/validar tabela de Colaboradores (`usuarios`/`funcionarios`)
+  - [ ] Criar/validar tabela de Batidas de Ponto (`registros_ponto`)
+  - [ ] Criar/validar tabela de Ajustes e Solicitações (`solicitacoes_ajuste`)
+  - [ ] Criar/validar tabela de Log de Auditoria (`audit_logs`)
+- [ ] **1.4. Políticas de Segurança RLS (Row Level Security)**
+  - [ ] Configurar RLS para leitura de ponto pelo terminal
+  - [ ] Configurar RLS para consulta de espelho de ponto do colaborador
+  - [ ] Configurar RLS para aprovações e auditoria exclusivas do gestor/admin
 
 ---
 
-## 🧮 2. Módulo de Cálculos e Regras de Negócio (`js/calc.js`)
-- [ ] **2.1. Regra de Tolerância de Batida**
-  - [ ] Implementar margem de tolerância de 15 min na entrada e 15 min na saída
-  - [ ] Implementar cálculo de abatimento debitando apenas os minutos excedentes a 15 min
-- [ ] **2.2. Controle de Intervalo Diário**
-  - [ ] Validação de 4 batidas por jornada diária
-  - [ ] Validação de tempo mínimo de intervalo (1 hora) e alerta em caso de retorno antecipado
-- [ ] **2.3. Gestão de Banco de Horas & Alerta Crítico**
-  - [ ] Cálculo de saldo acumulado (compensação 1:1)
-  - [ ] Verificação e atualização automática para status `ALERTA_JUSTA_CAUSA` caso saldo <= -20.00h
-  - [ ] Disparo de alertas/notificações para Gestor e RH
-- [ ] **2.4. Tratamento de Dias Fechados & Horas Extras Especiais**
-  - [ ] Identificação de batidas em domingos, feriados ou dias não úteis
-  - [ ] Marcação como Hora Extra Especial pendente de aprovação do gestor
+## 💻 Módulo 2: Interface do Terminal de Parede (`index.html`)
+- [ ] **2.1. Layout & Interface Visual (No-Build + Pico.css + Lucide Icons)**
+  - [ ] Estruturar layout otimizado para Tablets (paisagem/retrato) e Desktops
+  - [ ] Integrar Pico.css via CDN
+  - [ ] Integrar Lucide Icons via CDN (Proibido o uso de Emojis)
+  - [ ] Relógio digital dinâmico em tempo real e data
+- [ ] **2.2. Fluxo de Registro de Ponto**
+  - [ ] Identificação do colaborador (via Matrícula/PIN)
+  - [ ] Seleção e confirmação da batida (Entrada, Saída Intervalo, Retorno Intervalo, Saída Final)
+  - [ ] Validação visual e feedback do registro efetuado
+- [ ] **2.3. Emissão de Comprovante & Integração Nativas**
+  - [ ] Exibição do comprovante digital de ponto pós-batida
+  - [ ] Suporte a impressão via `window.print()` e `@media print`
+  - [ ] Captura opcional via câmera nativa (`MediaDevices API`) para validação visual
+- [ ] **2.4. Contingência**
+  - [ ] Redirecionamento/Orientação para Ajuste Manual em caso de falha de identificação
 
 ---
 
-## 📱 3. Módulo Terminal de Parede (`index.html` & `js/app.js`)
-- [ ] **3.1. Layout & Interface do Terminal**
-  - [ ] Integração com `Pico.css` e `Lucide Icons` (sem emojis)
-  - [ ] Display de relógio em tempo real e identificação do colaborador
-  - [ ] Painel de registro rápido de ponto (4 batidas)
-- [ ] **3.2. Integração com APIs do Navegador**
-  - [ ] Emissão e visualização do comprovante de ponto
-  - [ ] Suporte a Impressão CSS `@media print` via `window.print()`
-  - [ ] Suporte opcional a câmera via `MediaDevices API`
-- [ ] **3.3. Contingência & Solicitação de Ajuste**
-  - [ ] Redirecionamento para solicitação de ajuste em caso de falha de identificação
+## 🧮 Módulo 3: Lógica e Cálculos de Ponto (`js/calc.js`)
+- [ ] **3.1. Regras de Tolerância e Abatimento**
+  - [ ] Implementar margem de tolerância de 15 minutos na entrada e 15 minutos na saída
+  - [ ] Calcular abatimento debitando exclusivamente os minutos que excederem os 15 min (ex: 25 min atraso = 10 min débito)
+- [ ] **3.2. Controle de Intervalo (Almoço/Pausa)**
+  - [ ] Controle e validação de 4 batidas diárias
+  - [ ] Validação do tempo mínimo de descanso (1 hora) e alerta de retorno antecipado para o gestor
+- [ ] **3.3. Banco de Horas e Alerta Crítico**
+  - [ ] Cálculo de saldo acumulado na proporção 1:1 (extras abatem débitos)
+  - [ ] Verificação do limite crítico de -20.00 horas
+  - [ ] Alteração de status do colaborador para `ALERTA_JUSTA_CAUSA` e notificação ao Gestor/RH
+- [ ] **3.4. Gestão de Dias Fechados e Horas Extras Especiais**
+  - [ ] Identificação de batidas em domingos, feriados ou dias não úteis configurados
+  - [ ] Marcação de horas como *Hora Extra Especial* pendente de aprovação do gestor
 
 ---
 
-## 🛡️ 4. Painel do Gestor / Admin (`admin.html`)
-- [ ] **4.1. Dashboard de Gestão**
-  - [ ] Visão geral de pontos registrados do dia
-  - [ ] Alertas visuais para colaboradores com retorno antecipado ou em `ALERTA_JUSTA_CAUSA`
-- [ ] **4.2. Gestão de Ajustes Manuais & Horas Extras Especiais**
-  - [ ] Painel para aprovação/rejeição de Ajustes Manuais solicitados
-  - [ ] Aprovação de Horas Extras Especiais (finais de semana/feriados)
+## 🛡️ Módulo 4: Painel do Gestor / Admin (`admin.html`)
+- [ ] **4.1. Visão Geral do Gestor**
+  - [ ] Dashboard com resumo diário de marcações, atrasos e faltas
+  - [ ] Alertas visuais para colaboradores em `ALERTA_JUSTA_CAUSA` ou com retornos antecipados de intervalo
+- [ ] **4.2. Gestão de Ajustes Manuais & Aprovações**
+  - [ ] Interface para analisar, aprovar ou rejeitar solicitações de ajustes manuais
+  - [ ] Interface para aprovação de Horas Extras Especiais (finais de semana/feriados)
 - [ ] **4.3. Audit Trail / Log de Auditoria Imutável**
-  - [ ] Interface para visualização de logs imutáveis de alterações
-  - [ ] Registro completo: Motivo, Horário Novo, Nome, Cargo, ID Responsável, IP/Data/Hora, Histórico Comparativo
+  - [ ] Garantir inviolabilidade dos registros (registros originais nunca são deletados/editados)
+  - [ ] Exibição de histórico imutável: Motivo, Horário Novo, Nome, Cargo, ID do responsável, IP/Data/Hora e comparativo antes/depois
 
 ---
 
-## 👤 5. Portal do Colaborador (`portal.html`)
+## 👤 Módulo 5: Portal do Colaborador (`portal.html`)
 - [ ] **5.1. Consulta de Espelho de Ponto**
-  - [ ] Visualização das batidas registradas por período/mês
-  - [ ] Extrato do saldo do Banco de Horas
-- [ ] **5.2. Solicitação de Ajuste / Justificativa**
-  - [ ] Formulário para envio de pedido de ajuste manual ao Superior Direto com justificativa e anexo/motivo
+  - [ ] Interface para consulta individual do espelho de ponto mensal/periódico
+  - [ ] Extrato detalhado do saldo do Banco de Horas
+- [ ] **5.2. Solicitação de Ajuste Manual & Justificativa**
+  - [ ] Formulário para o colaborador solicitar ajuste manual informando data, hora, motivo e justificativa
 
 ---
 
-## 🎨 6. Estilização, Acessibilidade & Testes (`css/custom.css`)
-- [ ] **6.1. Design System & CSS Customizado**
-  - [ ] Fundo claro (`light mode`) minimalista
-  - [ ] Estilização para visualização em Tablets (paisagem/retrato) e Desktops
-  - [ ] Estilos de impressão `@media print`
-- [ ] **6.2. Testes de Integração e Regras de Negócio**
-  - [ ] Testes unitários do algoritmo em `js/calc.js`
-  - [ ] Verificação E2E dos fluxos de registro e auditoria
+## 🎨 Módulo 6: Estilização, Impressão e Testes (`css/custom.css` & `js/app.js`)
+- [ ] **6.1. Estilização Customizada & Design System**
+  - [ ] Fundo claro/branco minimalista sem poluição visual
+  - [ ] Responsividade para Tablets e Desktops
+  - [ ] Estilos CSS específicos para impressão (`@media print`)
+- [ ] **6.2. Testes e Verificação**
+  - [ ] Testes unitários das funções puras de cálculo (`js/calc.js`)
+  - [ ] Validação E2E dos fluxos de registro, ajuste manual e auditoria imutável
 
 ---
 
@@ -95,3 +106,4 @@ Este documento contém o planejamento granular de tarefas e sub-tarefas para o d
 | Data | Responsável | Descrição da Alteração |
 | :--- | :--- | :--- |
 | 2025-05-18 | Jules (AI) | Criação inicial do `backlog.md` estruturado com base na SPEC técnica. |
+| 2025-05-18 | Jules (AI) | Reorganização do `backlog.md` em módulos numerados padrão (Conexão e Infraestrutura, Terminal, Cálculos, Gestor/Admin, Colaborador, Estilização e Testes) e conclusão da SPEC/SQL e Supabase. |
