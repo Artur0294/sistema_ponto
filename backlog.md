@@ -19,7 +19,7 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 - [x] **1.2. Configuração da Conexão Base Supabase (`js/supabase.js`)** *(Data de Conclusão: 2025-05-18)*
   - [x] Criar estrutura `/js`
   - [x] Importar SDK do Supabase via CDN ESM (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm`)
-  - [x] Exportar instância inicial do cliente Supabase (`SUPABASE_URL` e `SUPABASE_ANON_KEY`)
+  - [x] Exportar e inicializar instância do cliente Supabase com as chaves públicas informadas
 - [ ] **1.3. Modelagem do Banco de Dados PostgreSQL & Supabase**
   - [ ] Criar/validar tabela de Colaboradores (`usuarios`/`funcionarios`)
   - [ ] Criar/validar tabela de Batidas de Ponto (`registros_ponto`)
@@ -33,11 +33,11 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 ---
 
 ## 💻 Módulo 2: Interface do Terminal de Parede (`index.html`)
-- [ ] **2.1. Layout & Interface Visual (No-Build + Pico.css + Lucide Icons)**
-  - [ ] Estruturar layout otimizado para Tablets (paisagem/retrato) e Desktops
-  - [ ] Integrar Pico.css via CDN
-  - [ ] Integrar Lucide Icons via CDN (Proibido o uso de Emojis)
-  - [ ] Relógio digital dinâmico em tempo real e data
+- [x] **2.1. Layout & Interface Visual (No-Build + Pico.css + Lucide Icons)** *(Data de Conclusão: 2025-05-18)*
+  - [x] Estruturar layout otimizado para Tablets (paisagem/retrato) e Desktops (`index.html` & `css/custom.css`)
+  - [x] Integrar Pico.css via CDN
+  - [x] Integrar Lucide Icons via CDN (Proibido o uso de Emojis)
+  - [x] Relógio digital dinâmico em tempo real e data em `js/app.js`
 - [ ] **2.2. Fluxo de Registro de Ponto**
   - [ ] Identificação do colaborador (via Matrícula/PIN)
   - [ ] Seleção e confirmação da batida (Entrada, Saída Intervalo, Retorno Intervalo, Saída Final)
@@ -106,4 +106,4 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 | Data | Responsável | Descrição da Alteração |
 | :--- | :--- | :--- |
 | 2025-05-18 | Jules (AI) | Criação inicial do `backlog.md` estruturado com base na SPEC técnica. |
-| 2025-05-18 | Jules (AI) | Reorganização do `backlog.md` em módulos numerados padrão (Conexão e Infraestrutura, Terminal, Cálculos, Gestor/Admin, Colaborador, Estilização e Testes) e conclusão da SPEC/SQL e Supabase. |
+| 2025-05-18 | Jules (AI) | Reorganização do `backlog.md` em módulos numerados padrão e conclusão das tarefas 1.1, 1.2 e 2.1. |
