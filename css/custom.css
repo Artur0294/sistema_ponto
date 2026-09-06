@@ -1,0 +1,154 @@
+/* Custom Styles for Sistema de Controle de Ponto Eletrônico */
+
+:root {
+  --primary: #0066cc;
+  --primary-hover: #0052a3;
+  --bg-color: #f8f9fa;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: #212529;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-inline {
+  width: 1.25rem;
+  height: 1.25rem;
+  vertical-align: text-bottom;
+  display: inline-block;
+}
+
+/* Clock Display Card */
+.clock-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.clock-display {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #0066cc;
+  margin: 1.5rem 0;
+  font-family: monospace;
+}
+
+/* Punch Card */
+.punch-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.punch-type-label {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.btn-punch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.btn-punch svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Status Messages */
+.status-msg {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.status-msg.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-msg.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Receipt Card */
+.receipt-card {
+  background: #ffffff;
+  border: 2px dashed #0066cc;
+  border-radius: 8px;
+  margin-top: 2rem;
+  padding: 1.5rem;
+}
+
+.receipt-body {
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.footer-info {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Print CSS */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  #receipt-card, #receipt-card * {
+    visibility: visible;
+  }
+
+  #receipt-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+  }
+}

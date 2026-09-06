@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal de Ponto Eletrônico</title>
+  <!-- Pico.css CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <header class="container header-nav">
+    <nav>
+      <ul>
+        <li>
+          <strong class="brand-title">
+            <i data-lucide="clock" class="icon-inline"></i> Terminal de Ponto
+          </strong>
+        </li>
+      </ul>
+      <ul>
+        <li><a href="portal.html" class="secondary"><i data-lucide="user" class="icon-inline"></i> Portal do Colaborador</a></li>
+        <li><a href="admin.html" class="secondary"><i data-lucide="shield-check" class="icon-inline"></i> Painel Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <!-- Live Clock & Date Panel -->
+      <article class="clock-card text-center">
+        <header>
+          <h2><i data-lucide="calendar" class="icon-inline"></i> <span id="current-date">--/--/----</span></h2>
+        </header>
+        <div class="clock-display" id="clock-display">00:00:00</div>
+        <footer>
+          <small class="text-muted"><i data-lucide="map-pin" class="icon-inline"></i> Terminal Fixo de Parede</small>
+        </footer>
+      </article>
+
+      <!-- Punch Action Form -->
+      <article class="punch-card">
+        <header>
+          <h3><i data-lucide="check-square" class="icon-inline"></i> Registro de Ponto</h3>
+        </header>
+
+        <form id="punch-form" onsubmit="event.preventDefault();">
+          <label for="employee-id">
+            Matrícula ou Código do Colaborador
+            <input type="text" id="employee-id" name="employee-id" placeholder="Digite sua matrícula" required autocomplete="off">
+          </label>
+
+          <p class="punch-type-label"><strong>Selecione o tipo de batida:</strong></p>
+          <div class="grid btn-grid">
+            <button type="button" class="btn-punch" data-type="ENTRADA">
+              <i data-lucide="log-in"></i>
+              <span>Entrada</span>
+            </button>
+            <button type="button" class="btn-punch secondary" data-type="SAIDA_INTERVALO">
+              <i data-lucide="coffee"></i>
+              <span>Saída Intervalo</span>
+            </button>
+            <button type="button" class="btn-punch secondary" data-type="RETORNO_INTERVALO">
+              <i data-lucide="corner-down-left"></i>
+              <span>Retorno Intervalo</span>
+            </button>
+            <button type="button" class="btn-punch outline" data-type="SAIDA_FINAL">
+              <i data-lucide="log-out"></i>
+              <span>Saída Final</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="status-message" class="status-msg hidden"></div>
+      </article>
+    </div>
+
+    <!-- Comprovante / Receipt Container -->
+    <article id="receipt-card" class="receipt-card hidden">
+      <header class="receipt-header">
+        <h3><i data-lucide="file-text" class="icon-inline"></i> Comprovante de Registro de Ponto</h3>
+      </header>
+      <div id="receipt-content" class="receipt-body">
+        <!-- Receipt details populated dynamically -->
+      </div>
+      <footer class="receipt-actions no-print">
+        <button id="btn-print" class="secondary">
+          <i data-lucide="printer" class="icon-inline"></i> Imprimir Comprovante
+        </button>
+        <button id="btn-close-receipt" class="outline">
+          <i data-lucide="x" class="icon-inline"></i> Fechar
+        </button>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="container text-center footer-info">
+    <small>&copy; Sistema de Controle de Ponto Eletrônico e Gestão de Banco de Horas</small>
+  </footer>
+
+  <!-- Scripts JS -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
