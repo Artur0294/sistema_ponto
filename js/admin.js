@@ -11,14 +11,18 @@ function getOfflineAdjustments() {
 }
 
 async function loadDashboardMetrics() {
+  console.log('--- Iniciando carregamento do Painel Admin ---');
+
   try {
     // 1. Total Funcionários & Alertas
     let funcData = [];
-    try {
-      const { data } = await supabase.from('funcionarios').select('*');
-      if (data) funcData = data;
-    } catch (e) {
-      console.warn('Erro ao consultar funcionários:', e);
+    const { data: fData, error: fErr } = await supabase.from('funcionarios').select('*');
+    console.log('Resposta Supabase [funcionarios]:', { data: fData, error: fErr });
+
+    if (fErr) {
+      console.warn('Erro RLS/Permissão em [funcionarios]:', fErr.message);
+    } else if (fData) {
+      funcData = fData;
     }
 
     document.getElementById('metric-total-func').textContent = funcData.length;
@@ -30,16 +34,16 @@ async function loadDashboardMetrics() {
 
     // 2. Registros de ponto hoje
     let pontoCount = 0;
-    try {
-      const todayStr = new Date().toISOString().split('T')[0];
-      const { data: pontoData } = await supabase
-        .from('registros_ponto')
-        .select('id, data_hora')
-        .gte('data_hora', `${todayStr}T00:00:00`);
+    const todayStr = new Date().toISOString().split('T')[0];
+    const { data: pontoData, error: pontoErr } = await supabase
+      .from('registros_ponto')
+      .select('id, data_hora')
+      .gte('data_hora', `${todayStr}T00:00:00`);
 
-      if (pontoData) pontoCount = pontoData.length;
-    } catch (e) {
-      console.warn('Erro ao consultar ponto do dia:', e);
+    console.log('Resposta Supabase [registros_ponto]:', { data: pontoData, error: pontoErr });
+
+    if (!pontoErr && pontoData) {
+      pontoCount = pontoData.length;
     }
 
     const offlinePunches = JSON.parse(localStorage.getItem('offline_registros_ponto') || '[]');
@@ -47,42 +51,44 @@ async function loadDashboardMetrics() {
 
     // 3. Ajustes Pendentes (Online + Offline)
     let onlineAdjustments = [];
-    try {
-      const { data: ajData } = await supabase
-        .from('solicitacoes_ajuste')
-        .select('*')
-        .eq('status', 'PENDENTE');
+    const { data: ajData, error: ajErr } = await supabase
+      .from('solicitacoes_ajuste')
+      .select('*')
+      .eq('status', 'PENDENTE');
 
-      if (ajData) onlineAdjustments = ajData;
-    } catch (e) {
-      console.warn('Erro ao consultar ajustes online:', e);
+    console.log('Resposta Supabase [solicitacoes_ajuste]:', { data: ajData, error: ajErr });
+
+    if (ajErr) {
+      console.warn('Erro ao buscar [solicitacoes_ajuste]:', ajErr.message);
+    } else if (ajData) {
+      onlineAdjustments = ajData;
     }
 
     const offlineAdjustments = getOfflineAdjustments().filter(a => a.status === 'PENDENTE');
     const allAdjustments = [...offlineAdjustments, ...onlineAdjustments];
 
     document.getElementById('metric-ajustes-pendentes').textContent = allAdjustments.length;
-    renderAdjustmentsTable(allAdjustments);
+    renderAdjustmentsTable(allAdjustments, ajErr);
 
     // 4. Trilha de Auditoria
     let auditData = [];
-    try {
-      const { data: logs } = await supabase
-        .from('logs_auditoria')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
+    const { data: logs, error: logsErr } = await supabase
+      .from('logs_auditoria')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(20);
 
-      if (logs) auditData = logs;
-    } catch (e) {
-      console.warn('Erro ao carregar logs de auditoria:', e);
+    console.log('Resposta Supabase [logs_auditoria]:', { data: logs, error: logsErr });
+
+    if (!logsErr && logs) {
+      auditData = logs;
     }
 
     const offlineLogs = JSON.parse(localStorage.getItem('offline_logs_auditoria') || '[]');
-    renderAuditLogsTable([...offlineLogs, ...auditData]);
+    renderAuditLogsTable([...offlineLogs, ...auditData], logsErr);
 
   } catch (err) {
-    console.error('Erro ao carregar dados do painel do gestor:', err);
+    console.error('Erro crítico ao carregar dados do painel do gestor:', err);
   }
 }
 
@@ -102,7 +108,7 @@ function renderCriticalEmployees(employees) {
     html += `
       <li style="color: #c92a2a; font-weight: bold; margin-bottom: 0.5rem;">
         <i data-lucide="alert-octagon" class="icon-inline"></i>
-        Matrícula: ${emp.matricula || emp.id} - ${emp.nome || 'Colaborador'} (${emp.cargo || 'Funcendário'}) | Status: ${emp.status} | Saldo: ${saldoHoras}h
+        Matrícula: ${emp.matricula || emp.id} - ${emp.nome || 'Colaborador'} (${emp.cargo || 'Funcionário'}) | Status: ${emp.status} | Saldo: ${saldoHoras}h
       </li>
     `;
   });
@@ -111,12 +117,17 @@ function renderCriticalEmployees(employees) {
   initIcons();
 }
 
-function renderAdjustmentsTable(requests) {
+function renderAdjustmentsTable(requests, error) {
   const tbody = document.getElementById('adjustments-table-body');
   if (!tbody) return;
 
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="color:#d9534f;"><i data-lucide="alert-circle" class="icon-inline"></i> Erro ao consultar Supabase (${error.message || 'Erro RLS/Permissão'}). Exibindo contingência local se houver.</td></tr>`;
+    initIcons();
+  }
+
   if (!requests || requests.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Nenhuma solicitação de ajuste pendente.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Nenhuma solicitação de ajuste pendente encontrada no banco de dados.</td></tr>';
     return;
   }
 
@@ -150,7 +161,6 @@ function setupActionButtons() {
 
 async function handleAdjustmentAction(id, newStatus) {
   try {
-    // Se for um item offline em localStorage
     const offlineList = getOfflineAdjustments();
     const foundIndex = offlineList.findIndex(a => a.id === id);
 
@@ -158,13 +168,14 @@ async function handleAdjustmentAction(id, newStatus) {
       offlineList[foundIndex].status = newStatus;
       localStorage.setItem('offline_solicitacoes_ajuste', JSON.stringify(offlineList));
     } else {
-      await supabase
+      const { error } = await supabase
         .from('solicitacoes_ajuste')
         .update({ status: newStatus })
         .eq('id', id);
+
+      if (error) console.warn('Erro ao atualizar Supabase:', error.message);
     }
 
-    // Gravar log de auditoria
     const auditLog = {
       id: `LOG-${Date.now()}`,
       acao: `AJUSTE_${newStatus}`,
@@ -189,12 +200,12 @@ async function handleAdjustmentAction(id, newStatus) {
   }
 }
 
-function renderAuditLogsTable(logs) {
+function renderAuditLogsTable(logs, error) {
   const tbody = document.getElementById('audit-table-body');
   if (!tbody) return;
 
   if (!logs || logs.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Nenhum registro de auditoria gravado até o momento.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Nenhum registro de auditoria gravado no momento.</td></tr>';
     return;
   }
 

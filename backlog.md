@@ -20,9 +20,9 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
   - [x] Criar estrutura `/js`
   - [x] Importar SDK do Supabase via CDN ESM (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm`)
   - [x] Exportar e inicializar instância do cliente Supabase com as chaves públicas informadas
-- [x] **1.3. Validação da Conexão Compartilhada (`js/supabase.js`)** *(Data de Conclusão: 2025-05-18)*
-  - [x] Confirmar que `admin.html` e `portal.html` estão importando corretamente a instância do Supabase exportada por `js/supabase.js`
-  - [x] Verificar se não há duplicação de chamadas de inicialização do cliente Supabase
+- [x] **1.3. Validação da Conexão Compartilhada & Diagnóstico (`js/admin.js`)** *(Data de Conclusão: 2025-05-18)*
+  - [x] Inserir logs de depuração (`console.log`) detalhando respostas (`data`, `error`) do Supabase
+  - [x] Tratamento de erros visível e estados vazios nos elementos DOM da interface do Gestor
 
 ---
 
@@ -101,3 +101,4 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 | 2025-05-18 | Jules (AI) | Reorganização do `backlog.md` em módulos numerados padrão e conclusão das tarefas 1.1, 1.2 e 2.1. |
 | 2025-05-18 | Jules (AI) | Implementação dos módulos Painel do Gestor (`admin.html` / `js/admin.js`) e Portal do Colaborador (`portal.html` / `js/portal.js`), com atualização do backlog. |
 | 2025-05-18 | Jules (AI) | Adicionada e validada a seção de Navegação Geral e Teste de Fluxo de Dados End-to-End no `backlog.md`. |
+| 2025-05-18 | Jules (AI) | Adicionados logs de depuração e tratamento de erros do Supabase em `js/admin.js`. |
