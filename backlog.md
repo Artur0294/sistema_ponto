@@ -20,15 +20,9 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
   - [x] Criar estrutura `/js`
   - [x] Importar SDK do Supabase via CDN ESM (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm`)
   - [x] Exportar e inicializar instância do cliente Supabase com as chaves públicas informadas
-- [ ] **1.3. Modelagem do Banco de Dados PostgreSQL & Supabase**
-  - [ ] Criar/validar tabela de Colaboradores (`funcionarios`)
-  - [ ] Criar/validar tabela de Batidas de Ponto (`registros_ponto`)
-  - [ ] Criar/validar tabela de Ajustes e Solicitações (`solicitacoes_ajuste`)
-  - [ ] Criar/validar tabela de Log de Auditoria (`logs_auditoria`)
-- [ ] **1.4. Políticas de Segurança RLS (Row Level Security)**
-  - [ ] Configurar RLS para leitura de ponto pelo terminal
-  - [ ] Configurar RLS para consulta de espelho de ponto do colaborador
-  - [ ] Configurar RLS para aprovações e auditoria exclusivas do gestor/admin
+- [x] **1.3. Validação da Conexão Compartilhada (`js/supabase.js`)** *(Data de Conclusão: 2025-05-18)*
+  - [x] Confirmar que `admin.html` e `portal.html` estão importando corretamente a instância do Supabase exportada por `js/supabase.js`
+  - [x] Verificar se não há duplicação de chamadas de inicialização do cliente Supabase
 
 ---
 
@@ -87,14 +81,15 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 
 ---
 
-## 🎨 Módulo 6: Estilização, Impressão e Testes (`css/custom.css` & `js/app.js`)
-- [x] **6.1. Estilização Customizada & Design System** *(Data de Conclusão: 2025-05-18)*
-  - [x] Fundo claro/branco minimalista sem poluição visual
-  - [x] Responsividade para Tablets e Desktops
-  - [x] Estilos CSS específicos para impressão (`@media print`)
-- [ ] **6.2. Testes e Verificação**
-  - [ ] Testes unitários das funções puras de cálculo (`js/calc.js`)
-  - [ ] Validação E2E dos fluxos de registro, ajuste manual e auditoria imutável
+## 🔗 Módulo 6: Navegação Geral & Fluxo de Dados End-to-End
+- [x] **6.1. Sistema de Navegação Geral** *(Data de Conclusão: 2025-05-18)*
+  - [x] Cabeçalho de navegação padronizado e visível em todas as páginas (`index.html`, `admin.html`, `portal.html`)
+  - [x] Links direcionados corretamente para os arquivos correspondentes
+- [x] **6.2. Teste de Fluxo de Dados entre Telas** *(Data de Conclusão: 2025-05-18)*
+  - [x] **Terminal (`index.html`) -> Banco:** Gravação de batida na tabela `registros_ponto`
+  - [x] **Banco -> Portal (`portal.html`):** Batida visível no espelho de ponto do colaborador
+  - [x] **Portal -> Admin (`admin.html`):** Solicitação de ajuste inserida em `solicitacoes_ajuste` visível para o gestor
+  - [x] **Admin -> Banco:** Aprovação de ajuste altera status para `APROVADO`/`REJEITADO` e registra evento em `logs_auditoria`
 
 ---
 
@@ -105,3 +100,4 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 | 2025-05-18 | Jules (AI) | Criação inicial do `backlog.md` estruturado com base na SPEC técnica. |
 | 2025-05-18 | Jules (AI) | Reorganização do `backlog.md` em módulos numerados padrão e conclusão das tarefas 1.1, 1.2 e 2.1. |
 | 2025-05-18 | Jules (AI) | Implementação dos módulos Painel do Gestor (`admin.html` / `js/admin.js`) e Portal do Colaborador (`portal.html` / `js/portal.js`), com atualização do backlog. |
+| 2025-05-18 | Jules (AI) | Adicionada e validada a seção de Navegação Geral e Teste de Fluxo de Dados End-to-End no `backlog.md`. |

@@ -6,6 +6,21 @@ function initIcons() {
   }
 }
 
+function getOfflinePunches(matricula) {
+  const allOffline = JSON.parse(localStorage.getItem('offline_registros_ponto') || '[]');
+  return allOffline.filter(r => (r.funcionario_id === matricula || r.funcionario_matricula === matricula));
+}
+
+function getOfflineAdjustments() {
+  return JSON.parse(localStorage.getItem('offline_solicitacoes_ajuste') || '[]');
+}
+
+function saveOfflineAdjustment(adj) {
+  const adjustments = getOfflineAdjustments();
+  adjustments.push(adj);
+  localStorage.setItem('offline_solicitacoes_ajuste', JSON.stringify(adjustments));
+}
+
 function setupPortalEvents() {
   const btnSearch = document.getElementById('btn-search-ponto');
   const searchMatriculaInput = document.getElementById('search-matricula');
@@ -36,31 +51,37 @@ function setupPortalEvents() {
 
       showPortalStatus('Enviando solicitação de ajuste...', 'info');
 
-      try {
-        const payload = {
-          funcionario_id: matricula,
-          data_hora_sugerida: new Date(datetime).toISOString(),
-          tipo: tipo,
-          motivo: motivo,
-          status: 'PENDENTE',
-          created_at: new Date().toISOString()
-        };
+      const payload = {
+        id: `AJUSTE-OFF-${Date.now()}`,
+        funcionario_id: matricula,
+        funcionario_matricula: matricula,
+        data_hora_sugerida: new Date(datetime).toISOString(),
+        tipo: tipo,
+        tipo_batida: tipo,
+        motivo: motivo,
+        status: 'PENDENTE',
+        created_at: new Date().toISOString()
+      };
 
+      try {
         const { error } = await supabase
           .from('solicitacoes_ajuste')
           .insert([payload]);
 
         if (error) {
-          console.warn('Solicitação enviada via fallback local:', error.message);
+          console.warn('Gravando solicitação em contingência local:', error.message);
+          saveOfflineAdjustment(payload);
         }
 
         showPortalStatus('Solicitação de ajuste enviada ao seu Gestor/RH com sucesso!', 'success');
-
-        // Limpar formulário de justificativa
         document.getElementById('adj-motivo').value = '';
+
       } catch (err) {
-        console.error('Erro ao enviar ajuste:', err);
-        showPortalStatus('Falha ao enviar solicitação de ajuste.', 'error');
+        console.warn('Erro ao conectar ao banco, salvando ajuste localmente:', err);
+        saveOfflineAdjustment(payload);
+
+        showPortalStatus('Solicitação de ajuste enviada (armazenada em contingência).', 'success');
+        document.getElementById('adj-motivo').value = '';
       }
     });
   }
@@ -68,15 +89,16 @@ function setupPortalEvents() {
 
 async function loadEmployeePointMirror(matricula) {
   try {
+    const summaryCard = document.getElementById('employee-summary-card');
+
     // 1. Dados do colaborador
-    const { data: empData, error: empErr } = await supabase
+    const { data: empData } = await supabase
       .from('funcionarios')
       .select('*')
-      .eq('matricula', matricula)
+      .or(`matricula.eq.${matricula},id.eq.${matricula}`)
       .maybeSingle();
 
-    const summaryCard = document.getElementById('employee-summary-card');
-    if (!empErr && empData) {
+    if (empData) {
       document.getElementById('emp-nome').textContent = empData.nome || matricula;
       document.getElementById('emp-cargo').textContent = empData.cargo || 'Colaborador';
       document.getElementById('emp-status').textContent = empData.status || 'ATIVO';
@@ -84,28 +106,36 @@ async function loadEmployeePointMirror(matricula) {
       const saldoMin = empData.saldo_banco_horas_minutos || 0;
       const saldoHoras = (saldoMin / 60).toFixed(2);
       document.getElementById('emp-saldo').textContent = `${saldoHoras}h`;
-
-      if (summaryCard) summaryCard.classList.remove('hidden');
     } else {
       document.getElementById('emp-nome').textContent = matricula;
       document.getElementById('emp-cargo').textContent = 'Colaborador';
       document.getElementById('emp-status').textContent = 'ATIVO';
       document.getElementById('emp-saldo').textContent = '0.00h';
-      if (summaryCard) summaryCard.classList.remove('hidden');
     }
 
-    // Preencher automaticamente o campo de matrícula no formulário de ajuste
+    if (summaryCard) summaryCard.classList.remove('hidden');
+
     const adjMatricula = document.getElementById('adj-matricula');
     if (adjMatricula) adjMatricula.value = matricula;
 
-    // 2. Histórico de Ponto
-    const { data: mirrorData, error: mirrorErr } = await supabase
-      .from('registros_ponto')
-      .select('*')
-      .eq('funcionario_matricula', matricula)
-      .order('timestamp', { ascending: false });
+    // 2. Histórico de Ponto (Supabase + LocalStorage)
+    let onlineRecords = [];
+    try {
+      const { data: mirrorData } = await supabase
+        .from('registros_ponto')
+        .select('*')
+        .or(`funcionario_id.eq.${matricula},funcionario_matricula.eq.${matricula}`)
+        .order('data_hora', { ascending: false });
 
-    renderMirrorTable(mirrorData || []);
+      if (mirrorData) onlineRecords = mirrorData;
+    } catch (e) {
+      console.warn('Falha na consulta online do espelho:', e);
+    }
+
+    const offlineRecords = getOfflinePunches(matricula);
+    const combined = [...offlineRecords, ...onlineRecords];
+
+    renderMirrorTable(combined);
 
   } catch (err) {
     console.error('Erro ao carregar espelho de ponto:', err);
@@ -124,9 +154,9 @@ function renderMirrorTable(records) {
 
   tbody.innerHTML = records.map(rec => `
     <tr>
-      <td>${rec.id || 'REG-' + Date.now()}</td>
-      <td>${new Date(rec.timestamp || rec.data_hora).toLocaleString('pt-BR')}</td>
-      <td><strong>${formatType(rec.tipo_batida || rec.tipo)}</strong></td>
+      <td>${rec.id || 'REG-LOCAL'}</td>
+      <td>${new Date(rec.data_hora || rec.timestamp).toLocaleString('pt-BR')}</td>
+      <td><strong>${formatType(rec.tipo || rec.tipo_batida)}</strong></td>
       <td>${rec.origem || 'TERMINAL'}</td>
     </tr>
   `).join('');

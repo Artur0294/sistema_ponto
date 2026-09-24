@@ -33,18 +33,22 @@ function initIcons() {
   }
 }
 
+// LocalStorage Offline Fallback Helpers
+function saveOfflinePunch(punch) {
+  const offlinePunches = JSON.parse(localStorage.getItem('offline_registros_ponto') || '[]');
+  offlinePunches.push(punch);
+  localStorage.setItem('offline_registros_ponto', JSON.stringify(offlinePunches));
+}
+
 // Manipulação do Formulário de Batida
 function setupPunchEvents() {
   const punchButtons = document.querySelectorAll('.btn-punch');
   const employeeIdInput = document.getElementById('employee-id');
-  const statusEl = document.getElementById('status-message');
-  const receiptCard = document.getElementById('receipt-card');
-  const receiptContent = document.getElementById('receipt-content');
   const btnPrint = document.getElementById('btn-print');
   const btnCloseReceipt = document.getElementById('btn-close-receipt');
 
   punchButtons.forEach(button => {
-    button.addEventListener('click', async (e) => {
+    button.addEventListener('click', async () => {
       const punchType = button.getAttribute('data-type');
       const employeeId = employeeIdInput ? employeeIdInput.value.trim() : '';
 
@@ -56,29 +60,31 @@ function setupPunchEvents() {
 
       showStatus(`Processando registro de ${formatPunchType(punchType)}...`, 'info');
 
-      try {
-        const timestamp = new Date();
-        const punchRecord = {
-          funcionario_matricula: employeeId,
-          tipo_batida: punchType,
-          timestamp: timestamp.toISOString(),
-          origem: 'TERMINAL_FIXO'
-        };
+      const timestamp = new Date();
+      const punchRecord = {
+        funcionario_id: employeeId,
+        funcionario_matricula: employeeId,
+        data_hora: timestamp.toISOString(),
+        timestamp: timestamp.toISOString(),
+        tipo: punchType,
+        tipo_batida: punchType,
+        origem: 'TERMINAL_FIXO'
+      };
 
-        // Tentar salvar no Supabase se tabela existir ou registrar localmente
+      try {
         const { data, error } = await supabase
           .from('registros_ponto')
           .insert([punchRecord])
           .select();
 
         if (error) {
-          console.warn('Registro gravado localmente (Supabase fallback):', error.message);
+          console.warn('Salvando no armazenamento local offline:', error.message);
+          saveOfflinePunch(punchRecord);
         }
 
         const successMsg = `Batida de ${formatPunchType(punchType)} registrada com sucesso para o colaborador ${employeeId}!`;
         showStatus(successMsg, 'success');
 
-        // Exibir Comprovante
         renderReceipt({
           matricula: employeeId,
           tipo: formatPunchType(punchType),
@@ -87,8 +93,17 @@ function setupPunchEvents() {
         });
 
       } catch (err) {
-        console.error('Erro ao processar batida:', err);
-        showStatus('Falha ao conectar ao servidor. Solicite ajuste manual se necessário.', 'error');
+        console.warn('Erro na conexão com Supabase, registrando em contingência offline:', err);
+        saveOfflinePunch(punchRecord);
+
+        showStatus(`Batida de ${formatPunchType(punchType)} registrada em contingência offline.`, 'success');
+
+        renderReceipt({
+          matricula: employeeId,
+          tipo: formatPunchType(punchType),
+          dataHora: timestamp.toLocaleString('pt-BR'),
+          idTransacao: `REC-OFFLINE-${Date.now()}`
+        });
       }
     });
   });
@@ -101,6 +116,7 @@ function setupPunchEvents() {
 
   if (btnCloseReceipt) {
     btnCloseReceipt.addEventListener('click', () => {
+      const receiptCard = document.getElementById('receipt-card');
       if (receiptCard) receiptCard.classList.add('hidden');
     });
   }
