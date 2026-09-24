@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal do Colaborador - Espelho de Ponto e Solicitações</title>
+  <!-- Pico.css CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <header class="container header-nav">
+    <nav>
+      <ul>
+        <li>
+          <strong class="brand-title">
+            <i data-lucide="user-check" class="icon-inline"></i> Portal do Colaborador
+          </strong>
+        </li>
+      </ul>
+      <ul>
+        <li><a href="index.html" class="secondary"><i data-lucide="clock" class="icon-inline"></i> Terminal de Ponto</a></li>
+        <li><a href="admin.html" class="secondary"><i data-lucide="shield-check" class="icon-inline"></i> Painel Admin</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Identificação do Colaborador -->
+    <article>
+      <header>
+        <h3><i data-lucide="search" class="icon-inline"></i> Consulta de Espelho de Ponto</h3>
+      </header>
+      <form id="search-form" onsubmit="event.preventDefault();">
+        <div class="grid">
+          <label for="search-matricula">
+            Matrícula do Colaborador
+            <input type="text" id="search-matricula" placeholder="Digite sua matrícula" required autocomplete="off">
+          </label>
+          <div style="display: flex; align-items: flex-end;">
+            <button type="button" id="btn-search-ponto" class="primary" style="width: 100%;">
+              <i data-lucide="filter" class="icon-inline"></i> Consultar Espelho
+            </button>
+          </div>
+        </div>
+      </form>
+    </article>
+
+    <!-- Resumo do Banco de Horas e Dados do Colaborador -->
+    <div id="employee-summary-card" class="hidden">
+      <article>
+        <header>
+          <h3><i data-lucide="user" class="icon-inline"></i> Resumo de Jornada & Banco de Horas</h3>
+        </header>
+        <div class="grid">
+          <div>
+            <p><strong>Nome:</strong> <span id="emp-nome">--</span></p>
+            <p><strong>Cargo:</strong> <span id="emp-cargo">--</span></p>
+          </div>
+          <div>
+            <p><strong>Status:</strong> <span id="emp-status">--</span></p>
+            <p><strong>Saldo Banco de Horas:</strong> <span id="emp-saldo">0.00h</span></p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Tabela do Espelho de Ponto -->
+    <section>
+      <article>
+        <header>
+          <h3><i data-lucide="calendar" class="icon-inline"></i> Histórico de Registros de Ponto</h3>
+        </header>
+        <div class="table-responsive">
+          <table role="grid">
+            <thead>
+              <tr>
+                <th>ID Registrado</th>
+                <th>Data e Hora</th>
+                <th>Tipo Marcação</th>
+                <th>Origem</th>
+              </tr>
+            </thead>
+            <tbody id="mirror-table-body">
+              <tr>
+                <td colspan="4" class="text-center text-muted">Informe sua matrícula acima para buscar seu histórico.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- Formulário de Solicitação de Ajuste Manual -->
+    <section>
+      <article>
+        <header>
+          <h3><i data-lucide="edit-3" class="icon-inline"></i> Solicitção de Ajuste Manual</h3>
+        </header>
+        <form id="adjustment-form" onsubmit="event.preventDefault();">
+          <div class="grid">
+            <label for="adj-matricula">
+              Matrícula
+              <input type="text" id="adj-matricula" placeholder="Sua matrícula" required>
+            </label>
+
+            <label for="adj-datetime">
+              Data e Hora Sugerida
+              <input type="datetime-local" id="adj-datetime" required>
+            </label>
+
+            <label for="adj-tipo">
+              Tipo de Batida Faltante
+              <select id="adj-tipo" required>
+                <option value="ENTRADA">Entrada</option>
+                <option value="SAIDA_INTERVALO">Saída Intervalo</option>
+                <option value="RETORNO_INTERVALO">Retorno Intervalo</option>
+                <option value="SAIDA_FINAL">Saída Final</option>
+              </select>
+            </label>
+          </div>
+
+          <label for="adj-motivo">
+            Motivo / Justificativa
+            <textarea id="adj-motivo" rows="2" placeholder="Descreva o motivo da ausência da batida..." required></textarea>
+          </label>
+
+          <button type="button" id="btn-submit-adjustment" class="primary">
+            <i data-lucide="send" class="icon-inline"></i> Enviar Solicitação ao Gestor
+          </button>
+        </form>
+
+        <div id="portal-status-msg" class="status-msg hidden"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="container text-center footer-info">
+    <small>&copy; Sistema de Controle de Ponto Eletrônico e Gestão de Banco de Horas - Portal do Colaborador</small>
+  </footer>
+
+  <!-- Scripts JS -->
+  <script type="module" src="js/portal.js"></script>
+</body>
+</html>

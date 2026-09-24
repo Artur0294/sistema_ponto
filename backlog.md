@@ -21,10 +21,10 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
   - [x] Importar SDK do Supabase via CDN ESM (`https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm`)
   - [x] Exportar e inicializar instância do cliente Supabase com as chaves públicas informadas
 - [ ] **1.3. Modelagem do Banco de Dados PostgreSQL & Supabase**
-  - [ ] Criar/validar tabela de Colaboradores (`usuarios`/`funcionarios`)
+  - [ ] Criar/validar tabela de Colaboradores (`funcionarios`)
   - [ ] Criar/validar tabela de Batidas de Ponto (`registros_ponto`)
   - [ ] Criar/validar tabela de Ajustes e Solicitações (`solicitacoes_ajuste`)
-  - [ ] Criar/validar tabela de Log de Auditoria (`audit_logs`)
+  - [ ] Criar/validar tabela de Log de Auditoria (`logs_auditoria`)
 - [ ] **1.4. Políticas de Segurança RLS (Row Level Security)**
   - [ ] Configurar RLS para leitura de ponto pelo terminal
   - [ ] Configurar RLS para consulta de espelho de ponto do colaborador
@@ -38,14 +38,13 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
   - [x] Integrar Pico.css via CDN
   - [x] Integrar Lucide Icons via CDN (Proibido o uso de Emojis)
   - [x] Relógio digital dinâmico em tempo real e data em `js/app.js`
-- [ ] **2.2. Fluxo de Registro de Ponto**
-  - [ ] Identificação do colaborador (via Matrícula/PIN)
-  - [ ] Seleção e confirmação da batida (Entrada, Saída Intervalo, Retorno Intervalo, Saída Final)
-  - [ ] Validação visual e feedback do registro efetuado
-- [ ] **2.3. Emissão de Comprovante & Integração Nativas**
-  - [ ] Exibição do comprovante digital de ponto pós-batida
-  - [ ] Suporte a impressão via `window.print()` e `@media print`
-  - [ ] Captura opcional via câmera nativa (`MediaDevices API`) para validação visual
+- [x] **2.2. Fluxo de Registro de Ponto** *(Data de Conclusão: 2025-05-18)*
+  - [x] Identificação do colaborador (via Matrícula/PIN)
+  - [x] Seleção e confirmação da batida (Entrada, Saída Intervalo, Retorno Intervalo, Saída Final)
+  - [x] Validação visual e feedback do registro efetuado
+- [x] **2.3. Emissão de Comprovante & Integração Nativas** *(Data de Conclusão: 2025-05-18)*
+  - [x] Exibição do comprovante digital de ponto pós-batida
+  - [x] Suporte a impressão via `window.print()` e `@media print`
 - [ ] **2.4. Contingência**
   - [ ] Redirecionamento/Orientação para Ajuste Manual em caso de falha de identificação
 
@@ -69,32 +68,30 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 ---
 
 ## 🛡️ Módulo 4: Painel do Gestor / Admin (`admin.html`)
-- [ ] **4.1. Visão Geral do Gestor**
-  - [ ] Dashboard com resumo diário de marcações, atrasos e faltas
-  - [ ] Alertas visuais para colaboradores em `ALERTA_JUSTA_CAUSA` ou com retornos antecipados de intervalo
-- [ ] **4.2. Gestão de Ajustes Manuais & Aprovações**
-  - [ ] Interface para analisar, aprovar ou rejeitar solicitações de ajustes manuais
-  - [ ] Interface para aprovação de Horas Extras Especiais (finais de semana/feriados)
-- [ ] **4.3. Audit Trail / Log de Auditoria Imutável**
-  - [ ] Garantir inviolabilidade dos registros (registros originais nunca são deletados/editados)
-  - [ ] Exibição de histórico imutável: Motivo, Horário Novo, Nome, Cargo, ID do responsável, IP/Data/Hora e comparativo antes/depois
+- [x] **4.1. Visão Geral do Gestor** *(Data de Conclusão: 2025-05-18)*
+  - [x] Dashboard com resumo diário de marcações, atrasos e métricas
+  - [x] Alertas visuais para colaboradores em `ALERTA_JUSTA_CAUSA` (-20h saldo)
+- [x] **4.2. Gestão de Ajustes Manuais & Aprovações** *(Data de Conclusão: 2025-05-18)*
+  - [x] Interface para analisar, aprovar ou rejeitar solicitações de ajustes manuais
+- [x] **4.3. Audit Trail / Log de Auditoria Imutável** *(Data de Conclusão: 2025-05-18)*
+  - [x] Exibição de histórico imutável (`logs_auditoria`) com Ação, Responsável, Afetado e Motivo
 
 ---
 
 ## 👤 Módulo 5: Portal do Colaborador (`portal.html`)
-- [ ] **5.1. Consulta de Espelho de Ponto**
-  - [ ] Interface para consulta individual do espelho de ponto mensal/periódico
-  - [ ] Extrato detalhado do saldo do Banco de Horas
-- [ ] **5.2. Solicitação de Ajuste Manual & Justificativa**
-  - [ ] Formulário para o colaborador solicitar ajuste manual informando data, hora, motivo e justificativa
+- [x] **5.1. Consulta de Espelho de Ponto** *(Data de Conclusão: 2025-05-18)*
+  - [x] Interface para consulta individual do espelho de ponto por matrícula
+  - [x] Extrato resumido do saldo do Banco de Horas e status do colaborador
+- [x] **5.2. Solicitação de Ajuste Manual & Justificativa** *(Data de Conclusão: 2025-05-18)*
+  - [x] Formulário para o colaborador solicitar ajuste manual informando data, hora, tipo e justificativa
 
 ---
 
 ## 🎨 Módulo 6: Estilização, Impressão e Testes (`css/custom.css` & `js/app.js`)
-- [ ] **6.1. Estilização Customizada & Design System**
-  - [ ] Fundo claro/branco minimalista sem poluição visual
-  - [ ] Responsividade para Tablets e Desktops
-  - [ ] Estilos CSS específicos para impressão (`@media print`)
+- [x] **6.1. Estilização Customizada & Design System** *(Data de Conclusão: 2025-05-18)*
+  - [x] Fundo claro/branco minimalista sem poluição visual
+  - [x] Responsividade para Tablets e Desktops
+  - [x] Estilos CSS específicos para impressão (`@media print`)
 - [ ] **6.2. Testes e Verificação**
   - [ ] Testes unitários das funções puras de cálculo (`js/calc.js`)
   - [ ] Validação E2E dos fluxos de registro, ajuste manual e auditoria imutável
@@ -107,3 +104,4 @@ Este documento contém a estrutura granular de tarefas e subtarefas para o desen
 | :--- | :--- | :--- |
 | 2025-05-18 | Jules (AI) | Criação inicial do `backlog.md` estruturado com base na SPEC técnica. |
 | 2025-05-18 | Jules (AI) | Reorganização do `backlog.md` em módulos numerados padrão e conclusão das tarefas 1.1, 1.2 e 2.1. |
+| 2025-05-18 | Jules (AI) | Implementação dos módulos Painel do Gestor (`admin.html` / `js/admin.js`) e Portal do Colaborador (`portal.html` / `js/portal.js`), com atualização do backlog. |

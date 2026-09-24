@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Gestor - Controle de Ponto</title>
+  <!-- Pico.css CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/custom.css">
+</head>
+<body>
+  <header class="container header-nav">
+    <nav>
+      <ul>
+        <li>
+          <strong class="brand-title">
+            <i data-lucide="shield-check" class="icon-inline"></i> Painel do Gestor / RH
+          </strong>
+        </li>
+      </ul>
+      <ul>
+        <li><a href="index.html" class="secondary"><i data-lucide="clock" class="icon-inline"></i> Terminal de Ponto</a></li>
+        <li><a href="portal.html" class="secondary"><i data-lucide="user" class="icon-inline"></i> Portal do Colaborador</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Summary Metrics -->
+    <section class="grid">
+      <article>
+        <header><strong><i data-lucide="users" class="icon-inline"></i> Total Funcionários</strong></header>
+        <h3 id="metric-total-func">0</h3>
+      </article>
+      <article>
+        <header><strong><i data-lucide="clock" class="icon-inline"></i> Registros de Ponto Hoje</strong></header>
+        <h3 id="metric-ponto-hoje">0</h3>
+      </article>
+      <article>
+        <header><strong><i data-lucide="alert-triangle" class="icon-inline"></i> Solicitções Pendentes</strong></header>
+        <h3 id="metric-ajustes-pendentes">0</h3>
+      </article>
+      <article>
+        <header><strong><i data-lucide="shield-alert" class="icon-inline"></i> Alertas de Justa Causa</strong></header>
+        <h3 id="metric-alertas-criticos" style="color: var(--del-color, #d9534f);">0</h3>
+      </article>
+    </section>
+
+    <!-- Seção de Alertas Críticos -->
+    <section>
+      <article id="critical-alerts-card">
+        <header>
+          <h3><i data-lucide="shield-alert" class="icon-inline"></i> Colaboradores em Alerta Crítico (-20h Saldo)</h3>
+        </header>
+        <div id="critical-employees-list">
+          <p class="text-muted">Nenhum colaborador em estado crítico no momento.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- Seção de Solicitações de Ajuste Manual -->
+    <section>
+      <article>
+        <header>
+          <h3><i data-lucide="edit-3" class="icon-inline"></i> Solicitações de Ajuste Manual (Pendentes)</h3>
+        </header>
+        <div class="table-responsive">
+          <table role="grid">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Colaborador</th>
+                <th>Data/Hora Sugerida</th>
+                <th>Tipo Batida</th>
+                <th>Motivo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="adjustments-table-body">
+              <tr>
+                <td colspan="7" class="text-center text-muted">Carregando solicitações...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- Seção de Trilha de Auditoria (Logs Imutáveis) -->
+    <section>
+      <article>
+        <header>
+          <h3><i data-lucide="file-text" class="icon-inline"></i> Trilha de Auditoria (Logs Imutáveis)</h3>
+        </header>
+        <div class="table-responsive">
+          <table role="grid">
+            <thead>
+              <tr>
+                <th>Data / Hora Log</th>
+                <th>Ação / Evento</th>
+                <th>Responsável</th>
+                <th>Colaborador Afetado</th>
+                <th>Motivo / Histórico</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body">
+              <tr>
+                <td colspan="5" class="text-center text-muted">Carregando logs de auditoria...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="container text-center footer-info">
+    <small>&copy; Sistema de Controle de Ponto Eletrônico e Gestão de Banco de Horas - Módulo Admin</small>
+  </footer>
+
+  <!-- Scripts JS -->
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
